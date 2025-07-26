@@ -4,7 +4,7 @@ const app = express();
 app.use(express.json());
 
 app.get('/health', (req, res) => {
-  res.send('Auth Service is up!');
+  res.send('AI Service is up!');
 });
 
 const PORT = process.env.PORT || 3001;
