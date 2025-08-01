@@ -1,7 +1,6 @@
-import whisper
-
-model = whisper.load_model("base")
+import openai
 
 def transcribe_audio(filepath):
-    result = model.transcribe(filepath)
-    return result['text']
+    with open(filepath, "rb") as file:
+        transcript = openai.Audio.transcribe("whisper-1", file)
+    return transcript["text"]
