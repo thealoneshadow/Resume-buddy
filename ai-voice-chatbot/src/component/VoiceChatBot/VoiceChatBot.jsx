@@ -26,14 +26,14 @@ export default function VoiceChatBot() {
       formData.append("audio", file);
 
       try {
-        const response = await fetch("http://localhost:5000/api/ask", {
+        const response = await fetch("http://127.0.0.1:5000/api/ask", {
           method: "POST",
           body: formData,
         });
 
         const data = await response.json();
-        if (data.audioUrl) {
-          const aiAudio = new Audio(data.audioUrl);
+        if (data.audio_url) {
+          const aiAudio = new Audio(data.audio_url);
           aiAudio.play();
           setAudioUrl(data.audioUrl); // for reference
         } else {

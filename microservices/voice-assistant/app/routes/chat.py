@@ -3,7 +3,8 @@ from app.services.stt_service import transcribe_audio
 from app.services.llm_service import get_gemini_response
 from app.services.tts_service import synthesize_speech
 import os
-
+import flask_cors
+from flask_cors import cross_origin
 
 import uuid
 
@@ -12,6 +13,7 @@ chat = Blueprint('chat', __name__)
 
 
 @chat.route('/api/ask', methods=['POST'])
+@cross_origin()
 def ask():
     if 'audio' not in request.files:
         return jsonify({'error': 'No audio file provided'}), 400

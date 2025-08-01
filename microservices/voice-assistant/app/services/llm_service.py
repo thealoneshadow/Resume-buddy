@@ -20,14 +20,16 @@ def get_gemini_response(prompt: str) -> str:
     """
     try:
         updatedPrompt = f"""
-        You are experienced Ecommerce Agent with 20years of experience who help user in finding products 
-        that suits their needs.
-        Answer the following query by user:{prompt}. 
-        Make sure to answer in a very concise concise manner.
+        You are an experienced ecommerce expert with 20 years of knowledge. 
+        Help users find the best products on Amazon based on their request. 
+        Speak clearly and briefly, like you’re talking to someone. 
+        Focus only on product suggestions, categories, or what to search for on Amazon.
+
+        User said: "{prompt}"
+
+        Note: Very Important
+        Make sure not to use asterisks or any other special characters in your response.
         
-        Rule:
-        You try to make it as short as possible, but still provide enough information to be helpful.
-        You can refer to amanzon products listing
         """
         response = model.generate_content(updatedPrompt)
         return response.text.strip()

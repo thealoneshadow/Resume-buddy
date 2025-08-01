@@ -7,3 +7,4 @@ pydub
 google-generativeai==0.4.1
 boto3
 faster-whisper
+flask-cors
