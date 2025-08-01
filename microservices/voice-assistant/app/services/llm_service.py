@@ -19,7 +19,17 @@ def get_gemini_response(prompt: str) -> str:
     Send a prompt to Gemini and return the response text.
     """
     try:
-        response = model.generate_content(prompt)
+        updatedPrompt = f"""
+        You are experienced Ecommerce Agent with 20years of experience who help user in finding products 
+        that suits their needs.
+        Answer the following query by user:{prompt}. 
+        Make sure to answer in a very concise concise manner.
+        
+        Rule:
+        You try to make it as short as possible, but still provide enough information to be helpful.
+        You can refer to amanzon products listing
+        """
+        response = model.generate_content(updatedPrompt)
         return response.text.strip()
     except Exception as e:
         print(f"Error in Gemini response: {e}")
