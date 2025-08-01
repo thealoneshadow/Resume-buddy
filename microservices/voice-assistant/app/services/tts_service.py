@@ -1,32 +1,55 @@
 from gtts import gTTS
-from playsound import playsound
 import os
 import uuid
+import boto3
 
-def synthesize_speech(text: str, output_path: str = None):
+s3 = boto3.client(
+    's3',
+    aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+    region_name=os.environ.get("AWS_REGION")
+)
+
+S3_BUCKET = os.environ.get("S3_BUCKET_NAME")
+
+def synthesize_speech(text: str, output_path: str = None) -> str:
     """
     Convert text to speech using gTTS.
-    If output_path is provided, save to MP3 file.
-    Otherwise, play aloud.
+    Saves the MP3 file and returns the path.
     """
     try:
         if not text:
             print("No text provided for TTS.")
-            return
+            return ""
 
-        # Generate audio
+        # Create a temporary path
+        filename = f"{uuid.uuid4()}.mp3"
+        temp_path = f"{filename}"
+
+        # Generate speech
         tts = gTTS(text=text, lang='en')
+        tts.save(filename)
+        print(f"TTS audio saved to: {filename}")
+        # Synthesize and save
+        # tts = gTTS(text=text, lang='en')
+        # tts.save(filename)
 
-        if output_path:
-            # Save to specified file
-            tts.save(output_path)
-            print(f"TTS audio saved to: {output_path}")
-        else:
-            # Save to a temporary file and play
-            temp_file = f"/tmp/{uuid.uuid4()}.mp3"
-            tts.save(temp_file)
-            playsound(temp_file)
-            os.remove(temp_file)
+        s3.upload_file(filename, S3_BUCKET, filename, ExtraArgs={'ContentType': 'audio/mpeg'})
+        print(f"Uploaded TTS audio to S3: {filename}")
+        # Cleanup temp file
+        os.remove(temp_path)
+        url = s3.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': S3_BUCKET, 'Key': filename},
+            ExpiresIn=3600  # 1 hour
+        )
+
+        # Return public S3 URL
+        return url
+
+        # print(f"TTS audio saved to: {filename}")
+        # return filename
 
     except Exception as e:
         print(f"Error during TTS synthesis: {e}")
+        return ""
