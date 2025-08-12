@@ -20,6 +20,7 @@ def ask():
         return jsonify({'error': 'No audio file provided'}), 400
 
     if request.form.get("message") == "":
+        os.makedirs('static', exist_ok=True) 
         audio_file = request.files['audio']
         filename = f"temp_{uuid.uuid4().hex}.mp3"
         filepath = os.path.join('static', filename)
